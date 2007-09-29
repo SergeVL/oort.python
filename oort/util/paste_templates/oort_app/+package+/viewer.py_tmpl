@@ -1,0 +1,38 @@
+# -*- coding: UTF-8 -*-
+
+#=======================================================================
+import rdflib
+from oort.sitebase import ResourceViewer, Display, Aspect
+
+#from ${project}.queries import *
+from ${project}.ns import *
+#=======================================================================
+
+
+class ${project.title()}ResourceViewer(ResourceViewer):
+
+    resourceBase = "http://${project}/"
+    trailSep = "/"
+
+    langOrder = 'en',
+
+    class HtmlDisplay(Display):
+        name = "html"
+        default = True
+        outputMethod = 'xhtml'
+        contentType = 'text/html'
+        outputEncoding  = 'iso-8859-1'
+        templateBase = "${project}/view/html"
+        globalQueries = {}
+        aspects = [
+                Aspect(RDFS.Resource, "unknown.xhtml", {}) ,
+                #Aspect(FOAF.Person, "person.xhtml", {}) ,
+                #Aspect(FOAF.Document, "webpage.xhtml", {})
+            ]
+
+
+def graph_factory():
+    graph = rdflib.ConjunctiveGraph()
+    return graph
+
+

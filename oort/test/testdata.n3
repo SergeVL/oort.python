@@ -1,0 +1,40 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix t: <http://example.org/oort/test#> .
+
+<tag:oort.to,2006:test:item:x> a t:Item ;
+    t:name "Item X";
+    t:title "Example Item"@en, "Exempelsak"@sv;
+    t:relation [ a t:Item; t:name "Related 1" ];
+    t:relation [ a t:Item; t:name "Related 2" ];
+    t:label
+        "En"@en,
+        "eN"@en,
+        "Sv"@sv,
+        "sV"@sv;
+    t:unaryRelation [ t:name "One Relation" ];
+    t:partlist (
+        [ a t:Part; t:name "Part 1" ]
+        [ a t:Part; t:name "Part 2" ]
+    );
+    t:multiple_partlist (
+        [ a t:Part; t:name "Part 1" ]
+    );
+    t:multiple_partlist (
+        [ a t:Part; t:name "Part 2" ]
+    );
+    t:xmlData """<p xml:lang="en">XML Data</p>"""^^rdf:XMLLiteral;
+    t:xmlData """<p xml:lang="sv">XML-data</p>"""^^rdf:XMLLiteral;
+    t:keyword "q", "w", "e", "r", "t", "y" .
+
+<tag:oort.to,2006:test:part:a> a t:Part;
+    t:name "Part A";
+    t:owner <tag:oort.to,2006:test:item:x> .
+
+<tag:oort.to,2006:test:part:b> a t:Part;
+    t:name "Part B";
+    t:owner <tag:oort.to,2006:test:item:x> .
+
+<tag:oort.to,2006:test:item:creator>
+    t:name "Creator";
+    t:creation <tag:oort.to,2006:test:item:x> .
+

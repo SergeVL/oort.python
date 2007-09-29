@@ -1,0 +1,3 @@
+from oort.rdfview import *
+from ${project}.ns import *
+
