@@ -5,7 +5,7 @@ import oort
 setup(
     name = "Oort",
     version = oort.__version__,
-    description = """A WSGI-enabled toolkit for creating RDF-driven web apps.""",
+    description = """A toolkit for accessing RDF graphs as regular objects. Includes some generic graph tools as well.""",
     long_description = oort.__doc__,
     classifiers = [
         "Development Status :: 3 - Alpha",
@@ -18,7 +18,7 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
         ],
-    keywords = "toolkit rdf orm",
+    keywords = "rdf graph toolkit orm programming",
     author = "Niklas Lindström",
     author_email = "lindstream@gmail.com",
     license = "BSD",
