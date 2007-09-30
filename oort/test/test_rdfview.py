@@ -1,3 +1,4 @@
+from nose.tools import assert_equals
 from rdflib import ConjunctiveGraph as Graph, URIRef, Literal
 from oort.rdfview import *
 from oort.util import queries
@@ -14,7 +15,6 @@ def _create_test_graph(filename='testdata.n3'):
 testgraph = _create_test_graph()
 
 
-def assert_equals(v1, v2): assert unicode(v1) == unicode(v2)
 
 def assert_all_equals(results, expected):
     assert set(unicode(v) for v in results) == set(expected)
@@ -79,7 +79,7 @@ class TestItem:
 
 def test_localized():
     for l, v in [(en, u'Example Item'), (sv, u'Exempelsak')]:
-        yield assert_equals, Item(testgraph, l, itemX).title, v
+        yield assert_equals, Item(testgraph, l, itemX).title, Literal(v, l)
 
 def test_each_localized():
     assert_all_equals(Item(testgraph, en, itemX).labels, [u'En', u'eN'])
@@ -235,7 +235,7 @@ def test_bound_with():
     yield assert_equals, bound.__name__, 'Item'
     yield assert_equals, bound(testgraph, en, BNode()).name,  u'Item X'
     bound = Item.bound_with(itemX, sv)
-    yield assert_equals, bound(testgraph, en, BNode()).title, u'Exempelsak'
+    yield assert_equals, bound(testgraph, None, BNode()).title, Literal(u'Exempelsak', sv)
 
 
 def test_find_by():
