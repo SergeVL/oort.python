@@ -1,4 +1,3 @@
 
-recursive-include oort *.n3 *.rdf *.rdfs *.owl *.xml *.html *.xhtml
-recursive-include oort/util/paste_templates/ *.py_tmpl *.ini_tmpl
+recursive-include oort *.n3 *.rdf *.rdfs *.owl *.xml
 
