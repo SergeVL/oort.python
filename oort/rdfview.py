@@ -652,7 +652,7 @@ class QueryContext(object):
             query = self._queryTypeMap.get(typeref)
             if query:
                 return self._prepared_query(query)(uriref)
-        raise KeyError("%s has no query for type '%s'" % (self, typeref))
+        raise KeyError("%s has no query for type '%s'" % (self, uriref))
 
     def _prepared_query(self, query):
         return self.PreparedQuery(self, query)
