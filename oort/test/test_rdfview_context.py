@@ -10,7 +10,7 @@ class TypedItem(Item):
     RDF_TYPE = T.Item
 
 
-class TestQueryContext():
+class TestQueryContext(object):
 
     def test_by_attr(self):
         context = QueryContext(testgraph, 'en', query_modules=[test_rdfview])
