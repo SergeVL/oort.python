@@ -2,7 +2,7 @@
 Oort
 ========================================================================
 
-Oort is a a Python_-based toolkit for accessing RDF_ graphs as regular objects.
+Oort is a a Python_-based toolkit for accessing RDF_ graphs as plain objects.
 
 It uses RDFLib_ for the heavy lifting.
 
@@ -73,7 +73,7 @@ RdfQueries are either directly instantiated with an RDFLib ``Graph`` instance,
 language (string) and ``URIRef`` instance, or used via ``QueryContext``, which 
 facilitates this and other things.
 
-Se more examples (and the test source code) at the `Oort Website`_.
+Se more examples (and test source code) at the `Oort Website`_.
 
 .. _`Oort Website`: http://oort.to
 
