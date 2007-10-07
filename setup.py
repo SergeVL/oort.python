@@ -31,6 +31,7 @@ setup(
     url = "http://oort.to/",
     #packages = find_packages(exclude=["*.test", "*.test.*", "test.*", "test"]),
     packages = find_packages(),
+    namespace_packages = ['oort', 'oort.util', 'oort.test'],
     include_package_data = True,
     zip_safe = False,
     test_suite = 'nose.collector',

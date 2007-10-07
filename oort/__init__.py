@@ -35,7 +35,7 @@ The Oort core package.
 
 __docformat__ = 'reStructuredText en'
 __author__ = "Niklas Lindström"
-__version__ = "0.4"
+__version__ = "0.4.1"
 
 # This is a namespace package.
 try:
