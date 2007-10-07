@@ -5,7 +5,7 @@ import oort
 setup(
     name = "Oort",
     version = oort.__version__,
-    description = """A toolkit for accessing RDF graphs as regular objects. Includes some generic graph tools as well.""",
+    description = """A toolkit for accessing RDF graphs as plain objects.""",
     long_description = """
     %s""" % "".join(open("README.txt")),
     classifiers = [
