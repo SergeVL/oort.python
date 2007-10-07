@@ -9,8 +9,7 @@ setup(
     long_description = """
     %s""" % "".join(open("README.txt")),
     classifiers = [
-        "Development Status :: 3 - Alpha",
-        "Environment :: Web Environment",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
         "License :: OSI Approved :: BSD License",
@@ -31,7 +30,7 @@ setup(
     test_suite = 'nose.collector',
     install_requires = ['rdflib >= 2.3',
                       'setuptools'],
-    entry_points="""
-        """
+    #entry_points="""
+    #    """,
     )
 
