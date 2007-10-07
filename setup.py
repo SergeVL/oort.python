@@ -1,5 +1,10 @@
 # -*- coding: UTF-8 -*-
 from setuptools import setup, find_packages
+# Nasty hack to make e.g. setup.py register read PKG-INFO as utf-8.. {{{
+import sys
+reload(sys) # setdefaultencoding is deleted in site.py..
+sys.setdefaultencoding('utf-8')
+# }}}
 import oort
 
 setup(
@@ -19,6 +24,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules"
         ],
     keywords = "rdf graph toolkit database orm programming",
+    platforms = ["any"],
     author = "Niklas Lindström",
     author_email = "lindstream@gmail.com",
     license = "BSD",
