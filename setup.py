@@ -6,7 +6,8 @@ setup(
     name = "Oort",
     version = oort.__version__,
     description = """A toolkit for accessing RDF graphs as regular objects. Includes some generic graph tools as well.""",
-    long_description = oort.__doc__,
+    long_description = """
+    %s""" % "".join(open("README.txt")),
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
@@ -18,7 +19,7 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
         ],
-    keywords = "rdf graph toolkit orm programming",
+    keywords = "rdf graph toolkit database orm programming",
     author = "Niklas Lindström",
     author_email = "lindstream@gmail.com",
     license = "BSD",
@@ -29,7 +30,6 @@ setup(
     zip_safe = False,
     test_suite = 'nose.collector',
     install_requires = ['rdflib >= 2.3',
-                      'Genshi >= 0.4'
                       'setuptools'],
     entry_points="""
         """

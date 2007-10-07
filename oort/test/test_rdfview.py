@@ -1,6 +1,9 @@
 from nose.tools import assert_equals
-from rdflib import ConjunctiveGraph as Graph, URIRef, Literal
-from oort.rdfview import *
+from rdflib import (ConjunctiveGraph as Graph, URIRef, Literal, BNode,
+        Namespace, RDF)
+from oort.rdfview import (RdfQuery, one, each, one_where_self_is,
+        each_where_self_is, collection, localized, i18n_dict, each_localized,
+        localized_xml, Sorter, Filter, run_queries, THIS_QUERY, selector)
 from oort.util import queries
 
 

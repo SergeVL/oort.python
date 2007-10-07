@@ -122,9 +122,12 @@ class Selector(object):
     def back_to_graph(self, graph, subject, value):
         pass
 
-    def __rshift__(self, subQuery):
+    def viewed_as(self, subQuery):
         self._subQueryMarker = subQuery
         return self
+
+    def __rshift__(self, subQuery):
+        return self.viewed_as(subQuery)
 
     def add_filter(self, fltr):
         self.filters.append(fltr)
@@ -522,7 +525,7 @@ class localized(TypeLocalized, UnarySelector):
 try:
     from oort.util._genshifilters import language_filtered_xml
 except ImportError, e:
-    warnings.warn("Could not import - error was: %r. 'localized_xml' will not be available." % e)
+    warnings.warn("Could not import _genshifilters. Error was: %r. The selector 'localized_xml' will not be available." % e)
 else:
     class localized_xml(UnarySelector):
         """This selector removes any elements with an xml:lang other than the 

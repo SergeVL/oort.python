@@ -1,4 +1,4 @@
-from rdflib import ConjunctiveGraph as Graph, URIRef, Literal
+from rdflib import Literal
 from oort.rdfview import QueryContext
 
 
