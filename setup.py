@@ -28,8 +28,8 @@ setup(
     include_package_data = True,
     zip_safe = False,
     test_suite = 'nose.collector',
-    install_requires = ['rdflib >= 2.3',
-                      'setuptools'],
+    install_requires = ['rdflib >= 2.4',
+                        'setuptools'],
     #entry_points="""
     #    """,
     )
