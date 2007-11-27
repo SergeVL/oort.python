@@ -73,6 +73,9 @@ RdfQueries are either directly instantiated with an RDFLib ``Graph`` instance,
 language (string) and ``URIRef`` instance, or used via ``QueryContext``, which 
 facilitates this and other things.
 
+More
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Se more examples (and test source code) at the `Oort Website`_.
 
 .. _`Oort Website`: http://oort.to
