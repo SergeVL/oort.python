@@ -214,8 +214,7 @@ def test_typed_implicit_item():
     assert TypedImplicitItem.RDF_TYPE == T.OtherType
 
 
-def test_from_dict():
-    data = dict(
+dataDict = dict(
         name = "Item X",
         title = "Example Item",
         titleLang = { 'en': "Example Item", 'sv': "Exempelsak" },
@@ -226,10 +225,22 @@ def test_from_dict():
             ],
         xmlData = "<div/>",
     )
-    item = Item.from_dict(data, "en", URIRef("tag:oort.to,2006/test/item/x_fromdict"))
+
+def verify_from_data(item):
     # TODO: verify graph!
-    item.to_graph()
-    #print item.to_rdf(); raise Exception
+    assert_equals(item.uri, itemX)
+    assert_equals(item.title, Literal(dataDict['title'], "en"))
+    graph = item.to_graph()
+
+def test_from_dict():
+    item = Item.from_dict(dataDict, "en", itemX)
+    verify_from_data(item)
+
+def test_from_dict_with_uri():
+    data = dataDict.copy()
+    data['uri'] = itemX
+    item = Item.from_dict(data, "en")
+    verify_from_data(item)
 
 
 def test_bound_with():
