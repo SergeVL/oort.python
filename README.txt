@@ -77,4 +77,6 @@ Se more examples (and test source code) at the `Oort Website`_.
 
 .. _`Oort Website`: http://oort.to
 
+The latest development version can be installed from the
+`Oort SVN Trunk <http://oort.googlecode.com/svn/Oort/trunk#egg=Oort-dev>`_.
 
