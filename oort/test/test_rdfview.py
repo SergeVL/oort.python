@@ -128,8 +128,11 @@ def test_to_json():
 
 
 def test_to_graph():
-    itemGraph = Item(testgraph, en, itemX).to_graph()
+    graph = Item(testgraph, en, itemX).to_graph()
     # TODO: inspect!
+
+def test_to_graph_shallow():
+    pass # FIXME! Also with opt. deep..
 
 
 class CustomItem(Item):
@@ -212,6 +215,13 @@ def test_typed_implicit_item():
     assert item.name == "Item X"
     assert TypedImplicitItem._rdfbase_ == T
     assert TypedImplicitItem.RDF_TYPE == T.OtherType
+
+
+def test_to_graph_autottype():
+    graph = ImplicitItem(Graph(), en, itemX).to_graph(autotype=False)
+    assert len(graph) == 0
+    graph = ImplicitItem(Graph(), en, itemX).to_graph(autotype=True)
+    assert graph.value(itemX, RDF.type, None) == T.ImplicitItem
 
 
 dataDict = dict(

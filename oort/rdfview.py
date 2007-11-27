@@ -119,7 +119,7 @@ class Selector(object):
         return None or []
 
     @contract.default_method
-    def back_to_graph(self, graph, subject, value):
+    def back_to_graph(self, graph, subject, value, shallow):
         pass
 
     def viewed_as(self, subQuery):
@@ -277,7 +277,17 @@ class RdfQuery(object):
     def get_selected_value(self, name):
         return self._preparedSelects[name].result
 
-    def to_graph(self, newgraph=None):
+    def to_graph(self, newgraph=None, autotype=False, shallow=False, deep=()):
+        """
+        Create a new Graph (or populate ``newgraph``) from contained data.
+
+        If ``autotype`` is True, add eventual defined RDF_TYPE as type, but
+        only if current subject has no known type.
+
+        If ``shallow`` is True, do not add subsequent statements about objects
+        if they are ``URIRef``:s, unless they are referenced by any eventual
+        properties listed in ``deep``.
+        """
         subject = self._subject or BNode() # FIXME: is this ok?
         if not subject: return # FIXME, see fixme in __init__
 
@@ -288,23 +298,26 @@ class RdfQuery(object):
 
         for t in self._graph.objects(subject, RDF.type):
             lgraph.add((subject, RDF.type, t))
-        # TODO: autoType=True for opt. setting type from self.RDF_TYPE
+
+        if autotype and not self._graph.value(self.uri, RDF.type, None):
+            if self.RDF_TYPE:
+                lgraph.set((self.uri, RDF.type, self.RDF_TYPE))
 
         for selector in self._selectors.values():
             value = selector.__get__(self)
             if not value:
                 continue
-            # TODO: onlyNestedBNodes:bool, flag for only adding triples about bnodes
-            # (opt. with "nestedProperties=[list_of_properties]")
-            selector.back_to_graph(lgraph, subject, value)
+            # TODO: never deep for ..where_self_is.. if shallow?
+            selector.back_to_graph(lgraph, subject, value,
+                    shallow and selector.predicate not in deep)
 
         # FIXME: why is this happening; how can we prevent it?
         for t in lgraph:
             if None in t: lgraph.remove(t)
         return lgraph
 
-    def to_rdf(self):
-        return self.to_graph().serialize(format='pretty-xml')
+    def to_rdf(self, **kwargs):
+        return self.to_graph(**kwargs).serialize(format='pretty-xml')
 
     def to_dict(self, keepSubject=False):
         d = {}
@@ -445,24 +458,25 @@ class Sorter(object):
 
 
 
-def back_from_value(graph, subject, predicate, value):
-        if isinstance(value, RdfQuery):
-            graph.add((subject, predicate, value._subject))
-            value.to_graph(graph)
-        else:
-            if not isinstance(value, list):
-                # TODO: fix.. what? aren't lists handled in RdfQuery?
-                graph.add((subject, predicate, value))
+def back_from_value(graph, subject, predicate, value, shallow=False):
+    if isinstance(value, RdfQuery):
+        graph.add((subject, predicate, value._subject))
+        if not shallow or isinstance(value._subject, BNode):
+            value.to_graph(graph, shallow)
+    else:
+        if not isinstance(value, list):
+            # TODO: what? aren't lists handled in relevant back_to_graph:s?
+            graph.add((subject, predicate, value))
 
 
 class UnarySelector(Selector):
-    def back_to_graph(self, graph, subject, value):
-        back_from_value(graph, subject, self.predicate, value)
+    def back_to_graph(self, graph, subject, value, shallow):
+        back_from_value(graph, subject, self.predicate, value, shallow)
 
 class EachSelector(Selector):
-    def back_to_graph(self, graph, subject, values):
+    def back_to_graph(self, graph, subject, values, shallow):
         for value in values:
-            back_from_value(graph, subject, self.predicate, value)
+            back_from_value(graph, subject, self.predicate, value, shallow)
 
 
 class one(UnarySelector):
@@ -479,7 +493,9 @@ class one_where_self_is(Selector):
     def select(self, graph, lang, subject):
         return graph.value(None, self.predicate, subject, any=True)
 
-    def back_to_graph(self, graph, subject, value):
+    def back_to_graph(self, graph, subject, value, shallow):
+        if shallow:
+            return
         back_from_value(graph, value._subject, self.predicate, subject)
 
 
@@ -487,7 +503,9 @@ class each_where_self_is(Selector):
     def select(self, graph, lang, subject):
         return list(graph.subjects(self.predicate, subject))
 
-    def back_to_graph(self, graph, subject, values):
+    def back_to_graph(self, graph, subject, values, shallow):
+        if shallow:
+            return
         for value in values:
             back_from_value(graph, value._subject, self.predicate, subject)
 
@@ -507,14 +525,14 @@ class collection(Selector):
                     graph.value(subject, self.predicate, None, any=True)
                 ))
 
-    def back_to_graph(self, graph, subject, values):
+    def back_to_graph(self, graph, subject, values, shallow):
         if not values:
             graph.add((subject, self.predicate, RDF.nil))
             return
         bnode = BNode()
         graph.add((subject, self.predicate, bnode))
         for value in values:
-            back_from_value(graph, bnode, RDF.first, value)
+            back_from_value(graph, bnode, RDF.first, value, shallow)
             newBnode = BNode()
             graph.add((bnode, RDF.rest, newBnode))
             bnode = newBnode
@@ -556,6 +574,14 @@ else:
             return language_filtered_xml(
                     graph.objects(subject, self.predicate), lang)
 
+        def back_to_graph(self, graph, subject, value, shallow):
+            # TODO: take a closer look at this..
+            if hasattr(value, 'render'):
+                value = value.render()
+            if not value:
+                return
+            back_from_value(graph, subject, self.predicate, value, shallow)
+
         def type_raw_value(self, value, lang):
             if isinstance(value, basestring):
                 value = Literal(value, datatype=RDF.XMLLiteral)
@@ -568,7 +594,7 @@ class i18n_dict(Selector):
             valueDict[value.language] = value
         return valueDict
 
-    def back_to_graph(self, graph, subject, value):
+    def back_to_graph(self, graph, subject, value, shallow):
         for lang, text in value.items():
             graph.add((subject, self.predicate, Literal(text, lang=lang)))
 
