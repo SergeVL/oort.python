@@ -146,10 +146,10 @@ class Selector(object):
             value = self.type_raw_value(value, lang)
         if sub:
             if isinstance(value, list):
-                prep.result = [sub.from_dict(val, lang, BNode())
+                prep.result = [sub.from_dict(val, lang)
                                 for val in value]
             else:
-                prep.result = sub.from_dict(value, lang, BNode())
+                prep.result = sub.from_dict(value, lang)
         else:
             prep.result = value
             prep.hasRun = True
@@ -204,6 +204,10 @@ class RdfQuery(object):
     RDF_TYPE = RDFS.Resource
 
     # TODO: test use of execCache propertly (it seems to work though)
+    # TODO: should graph be wrapped as readonly? Update features won't update
+    # it (and its probably a bad idea to allow it, since current idea is that
+    # updates should happen through other means - e.g. via document-centric
+    # contexts.)
 
     def __init__(self, graph, lang, subject, execCache=None):
         self._graph = graph
@@ -245,12 +249,20 @@ class RdfQuery(object):
         return bound_query
 
     @classmethod
-    def from_dict(cls, data, lang, subject):
+    def from_dict(cls, data, lang, subject=None):
+        """
+        Instantiate from a dict or an URIRef. If dict includes 'uri', it will
+        be used as subject.
+        """
         graph = ConjunctiveGraph()
-        query = cls(graph, lang, subject)
+        subject = subject or BNode()
+        instance = cls(graph, lang, subject)
         for k, v in data.items():
-            setattr(query, k, v)
-        return query
+            if k == 'uri' and 'uri' not in cls._selectors:
+                instance._subject = v
+            else:
+                setattr(instance, k, v)
+        return instance
 
     @classmethod
     def find_by(cls, graph, lang, execCache=None, **kwargs):
@@ -260,26 +272,30 @@ class RdfQuery(object):
         for subject in graph.subjects(predicate, value):
             yield query_or_cached(cls, execCache)(graph, lang, subject)
 
-    @property
-    def uri(self):
-        return self._subject
+    uri = property(lambda self: self._subject)
 
     def get_selected_value(self, name):
         return self._preparedSelects[name].result
 
-    def to_graph(self, lgraph=None):
+    def to_graph(self, newgraph=None):
         subject = self._subject or BNode() # FIXME: is this ok?
         if not subject: return # FIXME, see fixme in __init__
 
-        lgraph = lgraph or ConjunctiveGraph()
+        lgraph = newgraph or ConjunctiveGraph()
+        if not newgraph:
+            for key, ns in self._graph.namespaces():
+                lgraph.bind(key, ns)
 
         for t in self._graph.objects(subject, RDF.type):
             lgraph.add((subject, RDF.type, t))
+        # TODO: autoType=True for opt. setting type from self.RDF_TYPE
 
         for selector in self._selectors.values():
             value = selector.__get__(self)
             if not value:
                 continue
+            # TODO: onlyNestedBNodes:bool, flag for only adding triples about bnodes
+            # (opt. with "nestedProperties=[list_of_properties]")
             selector.back_to_graph(lgraph, subject, value)
 
         # FIXME: why is this happening; how can we prevent it?
@@ -434,7 +450,8 @@ def back_from_value(graph, subject, predicate, value):
             graph.add((subject, predicate, value._subject))
             value.to_graph(graph)
         else:
-            if not isinstance(value, list): # TODO: fix this
+            if not isinstance(value, list):
+                # TODO: fix.. what? aren't lists handled in RdfQuery?
                 graph.add((subject, predicate, value))
 
 
