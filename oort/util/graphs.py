@@ -186,6 +186,7 @@ def load_dir_if_modified(graph, basedir,
 
     ``accept``
         an optional callable returning wether a given file should be loaded.
+        By default, all files with a computable format will be loaded.
 
     ``computeContextUri``
         an optional callable returning the context uri to be used. It's given

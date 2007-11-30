@@ -662,17 +662,31 @@ class QueryContext(object):
 
     """
 
+    @classmethod
+    def context_factory(cls, graph, langobj, queries=None, query_modules=None):
+        querydict, queryTypeMap = cls._make_query_maps(queries, query_modules)
+        def new_instance():
+            qc = cls(graph, langobj)
+            qc._querydict = querydict
+            qc._queryTypeMap = queryTypeMap
+            return qc
+        return new_instance
+
     def __init__(self, graph, langobj, queries=None, query_modules=None):
         self._graph = graph
         self._execCache = ExecCache()
-
         if callable(langobj):
             get_lang = langobj
         else:
             def get_lang(): return langobj
         self._get_lang = get_lang
+        querydict, queryTypeMap = self._make_query_maps(queries, query_modules)
+        self._querydict = querydict
+        self._queryTypeMap = queryTypeMap
 
-        self._querydict = querydict = {}
+    @staticmethod
+    def _make_query_maps(queries, query_modules):
+        querydict = {}
         if queries:
             for query in queries:
                 querydict[query.__name__] = query
@@ -682,9 +696,11 @@ class QueryContext(object):
                     if isinstance(obj, type) and issubclass(obj, RdfQuery):
                         querydict[name] = obj
 
-        self._queryTypeMap = {}
+        queryTypeMap = {}
         for query in querydict.values():
-            self._queryTypeMap[query.RDF_TYPE] = query
+            queryTypeMap[query.RDF_TYPE] = query
+
+        return querydict, queryTypeMap
 
     def __getattr__(self, name):
         try:

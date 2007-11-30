@@ -9,13 +9,19 @@ from oort.test import test_rdfview
 class TypedItem(Item):
     RDF_TYPE = T.Item
 
+def assert_item_facts(item):
+    assert item.uri == itemX, \
+            "Unexpected uri: %r" % item.uri
+    assert item.title == Literal(u'Example Item', 'en'), \
+            "Unexpected title: %r" % item.title
+
 
 class TestQueryContext(object):
 
     def test_by_attr(self):
         context = QueryContext(testgraph, 'en', query_modules=[test_rdfview])
         item = context.Item(itemX)
-        self.assert_item_stuff(item)
+        assert_item_facts(item)
 
     def test_find_all(self):
         context = QueryContext(testgraph, 'en', queries=[TypedItem])
@@ -26,7 +32,7 @@ class TestQueryContext(object):
         context = QueryContext(testgraph, 'en', queries=[Item, TypedItem])
         item = context.view_for(itemX)
         assert isinstance(item, TypedItem)
-        self.assert_item_stuff(item)
+        assert_item_facts(item)
 
     def test_by_attr_and_find_by(self):
         context = QueryContext(testgraph, 'en', queries=[Item])
@@ -38,12 +44,13 @@ class TestQueryContext(object):
             return 'en'
         context = QueryContext(testgraph, getlang, queries=[Item])
         item = context.Item(itemX)
-        self.assert_item_stuff(item)
+        assert_item_facts(item)
 
-    def assert_item_stuff(self, item):
-        assert item.uri == itemX, \
-                "Unexpected uri: %r" % item.uri
-        assert item.title == Literal(u'Example Item', 'en'), \
-                "Unexpected title: %r" % item.title
+
+def test_context_factory():
+    factory = QueryContext.context_factory(testgraph, 'en', queries=[Item])
+    context = factory()
+    item = context.Item(itemX)
+    assert_item_facts(item)
 
 
