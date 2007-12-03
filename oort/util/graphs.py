@@ -59,8 +59,7 @@ def get_format(fpath, fmap=None):
 
     """
     fmap = fmap or DEFAULT_FORMAT_MAP
-    ext = splitext(fpath)[-1][1:]
-    return fmap.get(ext)
+    return fmap.get(get_ext(fpath))
 
 
 def get_uri_leaf(uri):
@@ -80,14 +79,17 @@ def get_uri_leaf(uri):
 
 
 def collect_dir(basedir, loader,
-        accept=None, getFormat=get_format, errorHandler=None):
+        accept=None, getFormat=None, errorHandler=None):
+    getFormat = getFormat or get_format
     for base, fdirs, fnames in os.walk(basedir):
         for fname in fnames:
             fpath = join(base, fname)
             if accept and not accept(fpath):
+                _logger.debug("Not accepted: <%s>, skipping.", fpath)
                 continue
-            format = getFormat(get_ext(fpath))
+            format = getFormat(fpath)
             if not format:
+                _logger.debug("Unknown format: <%s>, skipping.", fpath)
                 continue
             try:
                 loader(fpath, format)
@@ -121,7 +123,7 @@ def dir_to_graph(basedir, graph=None):
         return ext in allowedExts
     def loader(fpath, format):
         fpath = fix_nonposix_path(fpath)
-        _logger.info("Loading: <%s>" % fpath)
+        _logger.info("Loading: <%s>", fpath)
         graph.load(fpath, format=format)
     collect_dir(basedir, loader, accept)
     return graph
@@ -173,7 +175,7 @@ def load_if_modified(graph, fpath, format='xml', contextUri=None):
     if modTime > loadedModTime:
         graph.remove((contextUri, LAST_MOD, loadedModValue))
         graph.remove_context(graph.context_id(contextUri))
-        _logger.info('Loading <%s> into <%s>' % (fpath, contextUri))
+        _logger.info('Loading <%s> into <%s>', fpath, contextUri)
         graph.load(fpath, publicID=contextUri, format=format)
         graph.add((contextUri, LAST_MOD, Literal(modTime)))
 
@@ -195,7 +197,6 @@ def load_dir_if_modified(graph, basedir,
     """
     basedir = expanduser(basedir)
     def loader(fpath, format):
-        print "DEBUG:", format
         if computeContextUri:
             contextUri = computeContextUri(graph, fpath)
         else:
