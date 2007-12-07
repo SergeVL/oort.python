@@ -208,8 +208,9 @@ def load_dir_if_modified(graph, basedir,
 # TODO: backwards-compat; deprecate?
 def load_dir(graph, basedir, formatMap=None, errorHandler=None):
     formatMap = formatMap or DEFAULT_FORMAT_MAP
+    getFormat = lambda fpath: get_format(fpath, fmap=formatMap)
     load_dir_if_modified(
-            graph, basedir, None, formatMap.get, errorHandler)
+            graph, basedir, None, getFormat, errorHandler)
 
 
 #-----------------------------------------------------------------------
