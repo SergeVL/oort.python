@@ -2,13 +2,14 @@
 #=======================================================================
 import os
 from os.path import dirname, join, splitext, expanduser
-from StringIO import StringIO
 import logging
 from rdflib import Literal, URIRef, Namespace, ConjunctiveGraph, RDFS
 #=======================================================================
 
 _logger = logging.getLogger(name=__name__)
 
+# TODO: some of this has been moved to rdfextras.tools(.pathutils);
+# track that and depend on it instead when it has landed.
 
 def get_ext(fpath, lower=True):
     """Gets the file extension from a file(path); stripped of leading '.' and in
@@ -104,7 +105,7 @@ def collect_dir(basedir, loader,
 # only on non-posix systems. Is the "fix" good enough?
 def fix_nonposix_path(fpath, sep=os.path.sep):
     if sep != '/':
-        fpath =  "file:///" + "/".join(fpath.split(os.path.sep))
+        fpath =  "file:///" + "/".join(fpath.split(sep))
     return fpath
 
 
