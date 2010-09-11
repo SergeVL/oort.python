@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 from setuptools import setup, find_packages
 # Nasty hack to make e.g. setup.py register read PKG-INFO as utf-8.. {{{
@@ -29,15 +30,12 @@ setup(
     author_email = "lindstream@gmail.com",
     license = "BSD",
     url = "http://oort.to/",
-    #packages = find_packages(exclude=["*.test", "*.test.*", "test.*", "test"]),
-    packages = find_packages(),
-    namespace_packages = ['oort', 'oort.util', 'oort.test'],
+    packages = find_packages(exclude=["*.test", "*.test.*", "test.*", "test"]),
+    namespace_packages = ['oort', 'oort.util'],
     include_package_data = True,
     zip_safe = False,
     test_suite = 'nose.collector',
-    install_requires = ['rdflib >= 3',
+    install_requires = ['rdflib',
                         'setuptools'],
-    #entry_points="""
-    #    """,
-    )
+)
 

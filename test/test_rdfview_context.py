@@ -2,8 +2,8 @@ from rdflib import Literal
 from oort.rdfview import QueryContext
 
 
-from oort.test.test_rdfview import T, testgraph, itemX, Item
-from oort.test import test_rdfview
+from test_rdfview import T, testgraph, itemX, Item
+import test_rdfview
 
 
 class TypedItem(Item):
