@@ -24,7 +24,7 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
         ],
-    keywords = "rdf graph toolkit database orm programming",
+    keywords = "rdf graph toolkit database orm programming sparql json",
     platforms = ["any"],
     author = "Niklas Lindström",
     author_email = "lindstream@gmail.com",
@@ -37,5 +37,9 @@ setup(
     test_suite = 'nose.collector',
     install_requires = ['rdflib',
                         'setuptools'],
+    #extras_require = {
+    #    'json':  ["simplejson"],
+    #    'sparqlclient':  ["SPARQLWrapper"],
+    #},
 )
 
