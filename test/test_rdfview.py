@@ -7,7 +7,7 @@ from oort.rdfview import (RdfQuery, one, each, one_where_self_is,
 from oort.util import queries
 
 
-from oort.test.helper import siblingpath
+from helper import siblingpath
 
 def _create_test_graph(filename='testdata.n3'):
     testfilepath = siblingpath(__file__, filename)
