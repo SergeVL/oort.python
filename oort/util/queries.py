@@ -19,7 +19,7 @@ class Resource(Annotated, Typed):
 #-----------------------------------------------------------------------
 
 class HasLabel(RdfQuery):
-    label = localized(RDFS.RDFSNS)
+    label = localized(RDFS)
 
 def make_label_query(uriBase, *uriTails):
     def labels(graph, lang, resource, **kwargs):
@@ -32,6 +32,6 @@ def make_label_query(uriBase, *uriTails):
     return labels
 
 class Lang(RdfQuery):
-    value = one(RDF.RDFNS)
-    label = i18n_dict(RDFS.RDFSNS)
+    value = one(RDF)
+    label = i18n_dict(RDFS)
 

@@ -35,7 +35,7 @@ setup(
     include_package_data = True,
     zip_safe = False,
     test_suite = 'nose.collector',
-    install_requires = ['rdflib >= 2.4',
+    install_requires = ['rdflib >= 3',
                         'setuptools'],
     #entry_points="""
     #    """,
